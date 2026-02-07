@@ -1,6 +1,7 @@
 const Menu = {
     show() {
         const menuDiv = document.getElementById("menu");
+        menuDiv.style.display = "flex";
         menuDiv.innerHTML = `
             <h1>Escolha seu personagem</h1>
             <button id="charRed">Vermelho</button>
@@ -13,9 +14,14 @@ const Menu = {
         document.getElementById("charBlue").addEventListener("click", () => {
             Game.start("blue");
         });
+
+        document.getElementById("gameCanvas").style.display = "none";
     },
 
     hide() {
-        document.getElementById("menu").innerHTML = "";
+        document.getElementById("menu").style.display = "none";
+        document.getElementById("gameCanvas").style.display = "block";
     }
 };
+
+

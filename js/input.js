@@ -1,21 +1,13 @@
-const Keys = {
-    left: false,
-    right: false,
-    up: false,
-};
+const Keys = { left: false, right: false, up: false };
 
-window.addEventListener("keydown", (e) => {
-    switch (e.code) {
-        case "ArrowLeft": Keys.left = true; break;
-        case "ArrowRight": Keys.right = true; break;
-        case "ArrowUp": Keys.up = true; break;
-    }
+window.addEventListener("keydown", e => {
+    if (e.code === "ArrowLeft") Keys.left = true;
+    if (e.code === "ArrowRight") Keys.right = true;
+    if (e.code === "ArrowUp") Keys.up = true;
 });
 
-window.addEventListener("keyup", (e) => {
-    switch (e.code) {
-        case "ArrowLeft": Keys.left = false; break;
-        case "ArrowRight": Keys.right = false; break;
-        case "ArrowUp": Keys.up = false; break;
-    }
+window.addEventListener("keyup", e => {
+    if (e.code === "ArrowLeft") Keys.left = false;
+    if (e.code === "ArrowRight") Keys.right = false;
+    if (e.code === "ArrowUp") Keys.up = false;
 });
