@@ -1,0 +1,18 @@
+/game
+│
+├─ index.html            # HTML principal (menu, escolha de personagem, canvas do jogo)
+├─ style.css             # CSS geral do jogo
+│
+├─ js/
+│   ├─ main.js           # Inicialização do jogo e loop principal
+│   ├─ game.js           # Lógica do jogo (estado, fases)
+│   ├─ player.js         # Classe do jogador
+│   ├─ input.js          # Gerenciamento de teclado
+│   ├─ level.js          # Definição das fases e plataformas
+│   ├─ menu.js           # Menu principal e escolha de personagem
+│   └─ collision.js      # Funções de colisão
+│
+├─ assets/
+│   ├─ sprites/          # Sprites do jogador e inimigos
+│   ├─ tiles/            # Tiles para plataformas
+│   └─ audio/  
