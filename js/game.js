@@ -2,52 +2,60 @@ const Game = {
     player: null,
     canvas: null,
     ctx: null,
-    lives: 5, // começa com 5 vidas
+    lives: 5,
     isGameOver: false,
 
     start(color) {
-        Menu.hide();
-        this.canvas = document.getElementById("gameCanvas");
-        this.ctx = this.canvas.getContext("2d");
+    Menu.hide();
 
-        this.lives = 5; // reseta vidas ao iniciar
-        const startPos = Level.init(0);
-        this.player = new Player(startPos.x, startPos.y, 50, 50, color);
+    this.canvas = document.getElementById("gameCanvas");
+    this.ctx = this.canvas.getContext("2d");
 
-        Main.loop();
-    },
+    this.gameOverScreen = document.getElementById("gameOverScreen");
+
+    // 🔥 CORRETO: começa escondido
+    this.gameOverScreen.style.display = "none";
+
+    this.lives = 5;
+    this.isGameOver = false;
+
+    const startPos = Level.init(0);
+    this.player = new Player(startPos.x, startPos.y, 50, 50, color);
+
+    Main.start();
+},
 
     loseLife() {
+        if (this.isGameOver) return;
+
         this.lives--;
-        if (this.lives <= 0 && !this.isGameOver) {
-    this.isGameOver = true;
 
-    alert("Game Over!");
-
-    Menu.show();
-    Main.stop(); // para o loop
-
-            // reinicia o progresso
-            Level.init(0);
+        if (this.lives <= 0) {
+            this.isGameOver = true;
+            Main.stop();
+            this.showGameOver();
         } else {
-            // reinicia fase atual sem perder progresso
-            this.player.vx = -35;   // empurra para trás
-        this.player.vy = -10;   // sobe um pouco
+            // pequeno knockback simples
+            this.player.vx = -10;
+            this.player.vy = -5;
         }
     },
 
     update() {
+        if (this.isGameOver) return;
+
         this.player.update(Level.platforms);
         Camera.follow(this.player);
 
-        // Queda na tela tira vida
+        // caiu da fase
         if (this.player.y > Level.height) {
             this.loseLife();
         }
 
-        // Colisão com portal
+        // portal
         if (Level.portal && Collision.rectRect(this.player, Level.portal)) {
             const nextStart = Level.nextPhase();
+
             if (nextStart) {
                 this.player.x = nextStart.x;
                 this.player.y = nextStart.y;
@@ -55,36 +63,72 @@ const Game = {
                 this.player.vy = 0;
                 Camera.follow(this.player);
             } else {
-                alert("Parabéns! Você completou todas as fases!");
-                Menu.show();
+                this.isGameOver = true;
+                Main.stop();
+                this.showGameOver();
             }
         }
 
-        // Colisão com NPCs
-if (Level.npcs) {
-    Level.npcs.forEach(npc => {
-        if (Collision.rectRect(this.player, npc) && !this.player.invulnerable) {
-            this.loseLife();
-            this.player.invulnerable = true;
+        // NPCs
+        if (Level.npcs) {
+            Level.npcs.forEach(npc => {
+                if (
+                    Collision.rectRect(this.player, npc) &&
+                    !this.player.invulnerable
+                ) {
+                    this.loseLife();
 
-            // Remove invulnerabilidade após 1 segundo
-            setTimeout(() => {
-                this.player.invulnerable = false;
-            }, this.player.invulnTime);
+                    this.player.invulnerable = true;
+                    setTimeout(() => {
+                        this.player.invulnerable = false;
+                    }, 1000);
+                }
+            });
         }
-    });
-}
-
     },
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         Level.draw(this.ctx);
         this.player.draw(this.ctx);
 
-        // Desenha vidas no canto superior esquerdo
+        // HUD vidas
         this.ctx.fillStyle = "red";
         this.ctx.font = "20px Arial";
         this.ctx.fillText(`Vidas: ${this.lives}`, 10, 30);
+    },
+
+    showGameOver() {
+    const screen = document.getElementById("gameOverScreen");
+    screen.style.display = "flex";
+},
+
+restart() {
+    Main.stop();
+
+    this.lives = 5;
+    this.isGameOver = false;
+
+    const screen = document.getElementById("gameOverScreen");
+    screen.style.display = "none";
+
+    this.canvas = document.getElementById("gameCanvas");
+    this.ctx = this.canvas.getContext("2d");
+
+    Level.currentPhase = 0;
+    const startPos = Level.init(0);
+
+    this.player = new Player(
+        startPos.x,
+        startPos.y,
+        50,
+        50,
+        "blue"
+    );
+
+    Camera.follow(this.player);
+
+    Main.start();
     }
 };
