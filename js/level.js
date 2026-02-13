@@ -10,7 +10,7 @@ const Phases = [
             new Platform(500, 350, 200, 20),
             new Platform(700, 250, 50, 20)
         ],
-        portal: new Portal(2950, 200, 40, 50), // único portal
+        portal: new Portal(2950, 500, 40, 50), // único portal
         npcs: [
             new NPC(400, 540, 40, 40),
             new NPC(600, 320, 40, 40)
