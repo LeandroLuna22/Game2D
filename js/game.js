@@ -1,53 +1,48 @@
 const Game = {
+    state: "menu",
     player: null,
     canvas: null,
     ctx: null,
     lives: 5,
-    isGameOver: false,
 
     start(color) {
-    Menu.hide();
+        Menu.hide();
 
-    this.canvas = document.getElementById("gameCanvas");
-    this.ctx = this.canvas.getContext("2d");
+        this.canvas = document.getElementById("gameCanvas");
+        this.ctx = this.canvas.getContext("2d");
 
-    this.gameOverScreen = document.getElementById("gameOverScreen");
+        this.lives = 5;
+        this.state = "playing";
 
-    // 🔥 CORRETO: começa escondido
-    this.gameOverScreen.style.display = "none";
+        const startPos = Level.init(0);
+        this.player = new Player(startPos.x, startPos.y, 50, 50, color);
 
-    this.lives = 5;
-    this.isGameOver = false;
+        document.getElementById("gameOverScreen").style.display = "none";
 
-    const startPos = Level.init(0);
-    this.player = new Player(startPos.x, startPos.y, 50, 50, color);
-
-    Main.start();
-},
+        Main.start();
+    },
 
     loseLife() {
-        if (this.isGameOver) return;
+        if (this.state !== "playing") return;
 
         this.lives--;
 
         if (this.lives <= 0) {
-            this.isGameOver = true;
-            Main.stop();
+            this.state = "gameover";
             this.showGameOver();
         } else {
-            // pequeno knockback simples
             this.player.vx = -10;
             this.player.vy = -5;
         }
     },
 
     update() {
-        if (this.isGameOver) return;
+        if (this.state !== "playing") return;
 
         this.player.update(Level.platforms);
         Camera.follow(this.player);
 
-        // caiu da fase
+        // caiu
         if (this.player.y > Level.height) {
             this.loseLife();
         }
@@ -63,8 +58,7 @@ const Game = {
                 this.player.vy = 0;
                 Camera.follow(this.player);
             } else {
-                this.isGameOver = true;
-                Main.stop();
+                this.state = "gameover";
                 this.showGameOver();
             }
         }
@@ -88,47 +82,26 @@ const Game = {
     },
 
     draw() {
+        if (!this.ctx || !this.player) return;
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         Level.draw(this.ctx);
         this.player.draw(this.ctx);
 
-        // HUD vidas
         this.ctx.fillStyle = "red";
         this.ctx.font = "20px Arial";
         this.ctx.fillText(`Vidas: ${this.lives}`, 10, 30);
     },
 
     showGameOver() {
-    const screen = document.getElementById("gameOverScreen");
-    screen.style.display = "flex";
-},
+        document.getElementById("gameOverScreen").style.display = "flex";
+    },
 
-restart() {
-    Main.stop();
+    restart() {
+        document.getElementById("gameOverScreen").style.display = "none";
 
-    this.lives = 5;
-    this.isGameOver = false;
-
-    const screen = document.getElementById("gameOverScreen");
-    screen.style.display = "none";
-
-    this.canvas = document.getElementById("gameCanvas");
-    this.ctx = this.canvas.getContext("2d");
-
-    Level.currentPhase = 0;
-    const startPos = Level.init(0);
-
-    this.player = new Player(
-        startPos.x,
-        startPos.y,
-        50,
-        50,
-        "blue"
-    );
-
-    Camera.follow(this.player);
-
-    Main.start();
+        Menu.show();
+        this.state = "menu";
     }
 };

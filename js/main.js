@@ -20,3 +20,8 @@ const Main = {
         }
     }
 };
+
+window.onload = () => {
+    Menu.show(); // 🔥 mostra menu ao abrir o jogo
+};
+
