@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+
+.screen {
+    position: absolute;
+    width: 100%;
+    top: 40%;
+}
+
+.hidden {
+    display: none;
+}
+
+canvas {
+    background: #222;
+    display: block;
+    margin: auto;
+}
+
+#hud {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    z-index: 10;
+}
